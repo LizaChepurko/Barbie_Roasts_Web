@@ -4,158 +4,242 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Barbie Roast Chat</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
+    :root {
+      --primary-pink: #ec4899;
+      --bg-pink: #fbcfe8;
+      --bubble-white: #ffffff;
+      --text-main: #4a4a4a;
+    }
 
     * { box-sizing: border-box; }
     
     body {
-      font-family: Arial, sans-serif;
-      background-color: #ffacea;
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(180deg, #ffe4f2 0%, #fda4d6 100%);
       margin: 0;
       padding: 0;
       height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      overflow: hidden;
+    }
+
+    /* --- Header --- */
+    header {
+      text-align: center;
+      padding: 20px 10px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
     }
 
     h2 {
-      font-family: "Times New Roman", Times, serif;
-      font-size: 2.5rem;
-      margin-top: 40px;
-      margin-bottom: 20px;
-      color: #000;
-      font-weight: normal;
-      text-align: center;
+      font-family: 'Pacifico', cursive;
+      font-size: 2.2rem;
+      margin: 0;
+      color: #d61c6e;
+      text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
     }
 
+    .subtitle {
+      font-size: 0.8rem;
+      color: #9d3866;
+      margin-top: 5px;
+      opacity: 0.8;
+    }
 
+    /* --- Chat Area --- */
     #chat {
       flex: 1;
       width: 100%;
-      max-width: 600px;
+      max-width: 800px;
+      margin: 0 auto;
       overflow-y: auto;
       padding: 20px;
+      padding-bottom: 120px;
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 20px;
     }
 
-    .msg {
-      padding: 12px 18px;
-      border-radius: 18px;
-      max-width: 80%;
-      line-height: 1.4;
+    .msg-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      max-width: 100%;
+    }
+
+    .msg-row.me {
+      flex-direction: row-reverse;
+      align-self: flex-end;
+    }
+
+    .msg-row.bot {
+      align-self: flex-start;
+    }
+
+    .avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    .bot .avatar { color: #d61c6e; background: #fff0f7; }
+    .me .avatar { color: white; background: #d61c6e; }
+
+    .msg-bubble {
+      padding: 14px 20px;
+      border-radius: 20px;
+      line-height: 1.5;
       font-size: 16px;
       position: relative;
       word-wrap: break-word;
-      min-height: 44px;
-      display: flex;
-      align-items: center;
+      max-width: 75%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
-    .me {
-      align-self: flex-end;
-      background-color: #e667af; 
+
+    .me .msg-bubble {
+      background-color: var(--primary-pink); 
       color: white;
       border-bottom-right-radius: 4px;
     }
 
-    .bot {
-      align-self: flex-start;
-      background-color: #ffffff;
-      color: #333;
+
+    .bot .msg-bubble {
+      background-color: var(--bubble-white);
+      color: var(--text-main);
       border-bottom-left-radius: 4px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
 
-
+    /* --- Typing Indicator --- */
     .typing-indicator {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      height: 20px;
+      gap: 4px;
+      padding: 5px 0;
     }
 
     .dot {
-      width: 8px;
-      height: 8px;
-      background-color: #8e24aa;
+      width: 6px;
+      height: 6px;
+      background-color: #d61c6e;
       border-radius: 50%;
       animation: bounce 1.4s infinite ease-in-out both;
     }
-
     .dot:nth-child(1) { animation-delay: -0.32s; }
     .dot:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-    @keyframes bounce {
-      0%, 80%, 100% { transform: scale(0); } 
-      40% { transform: scale(1); }
+    /* --- Input Area (Floating) --- */
+    .input-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+
+      background: linear-gradient(to top, rgba(253, 164, 214, 1) 40%, rgba(253, 164, 214, 0));
     }
 
     form {
       width: 100%;
       max-width: 600px;
-      padding: 20px;
+      background: white;
+      padding: 8px;
+      border-radius: 50px;
       display: flex;
-      gap: 12px;
-      margin-bottom: 10px;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(214, 28, 110, 0.15);
+      align-items: center;
     }
 
     input {
       flex: 1;
-      padding: 15px 20px;
+      padding: 12px 20px;
+      border: none;
       border-radius: 50px;
-      border: 3px solid #8e24aa;
-      background-color: #ffcce6;
       font-size: 16px;
       outline: none;
-      color: #6a1b9a;
-      transition: 0.3s;
+      color: #333;
+      font-family: 'Quicksand', sans-serif;
     }
 
-    input::placeholder { color: #dba3c9; }
-    input:focus { background-color: #fff0f8; box-shadow: 0 0 10px rgba(142, 36, 170, 0.2); }
+    input::placeholder { color: #d4a5b9; }
 
     button {
-      width: 54px;
-      height: 54px;
-      border: 3px solid #8e24aa;
-      border-radius: 16px;
-      background: transparent;
+      width: 45px;
+      height: 45px;
+      border: none;
+      border-radius: 50%;
+      background: var(--primary-pink);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: transform 0.2s;
+      flex-shrink: 0;
     }
     
+    button:hover { transform: scale(1.05); background: #be185d; }
     button:active { transform: scale(0.95); }
 
     button svg {
-      fill: none;
-      stroke: #8e24aa;
-      stroke-width: 2;
-      width: 28px;
-      height: 28px;
+      fill: white;
+      width: 20px;
+      height: 20px;
+      margin-left: 2px;
+    }
+
+    .footer-text {
+      font-size: 10px;
+      color: #9d3866;
+      margin-top: 10px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
   </style>
 </head>
 <body>
 
-  <h2>Roast By Barbie 💅</h2>
+  <header>
+    <h2>Roast By Barbie 💅</h2>
+    <div class="subtitle">Warning: She's plastic, fantastic, and brutally honest.</div>
+  </header>
 
-  <div id="chat"></div>
+  <div id="chat">
+    <div class="msg-row bot">
+      <div class="avatar">B</div>
+      <div class="msg-bubble">Ugh, is that what you decided to wear today? Tragic. I’m here to serve looks and destroy egos, and you look like an easy target. What do you have to say for yourself?</div>
+    </div>
+  </div>
 
-  <form id="form">
-    <input id="input" placeholder="Write an insult" autocomplete="off" />
-    <button type="submit" aria-label="Send">
-      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="22" y1="2" x2="11" y2="13"></line>
-        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-      </svg>
-    </button>
-  </form>
+  <div class="input-container">
+    <form id="form">
+      <input id="input" placeholder="Write an insult (if you dare)..." autocomplete="off" />
+      <button type="submit" aria-label="Send">
+        <svg viewBox="0 0 24 24">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+        </svg>
+      </button>
+    </form>
+  </div>
 
   <script type="module">
     import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
@@ -166,14 +250,31 @@
     const form = document.getElementById("form");
     const input = document.getElementById("input");
 
-    function addMsg(text, who){
-      const div = document.createElement("div");
-      div.className = `msg ${who}`;
 
-      if(text) div.textContent = text; 
-      chatEl.appendChild(div);
-      chatEl.scrollTop = chatEl.scrollHeight;
-      return div;
+    function addMsg(text, who) {
+
+      const row = document.createElement("div");
+      row.className = `msg-row ${who}`;
+
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.innerHTML = who === "bot" ? "B" : '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
+
+      const bubble = document.createElement("div");
+      bubble.className = "msg-bubble";
+      
+      if(text) bubble.textContent = text;
+      
+      row.appendChild(avatar);
+      row.appendChild(bubble);
+
+      chatEl.appendChild(row);
+      
+      setTimeout(() => {
+        row.scrollIntoView({ behavior: "smooth", block: "end" });
+      }, 100);
+
+      return bubble;
     }
 
     const client = await Client.connect(SPACE_URL);
@@ -186,8 +287,8 @@
       addMsg(message, "me");
       input.value = "";
 
-      const placeholder = addMsg("", "bot");
-      placeholder.innerHTML = `
+      const placeholderBubble = addMsg("", "bot");
+      placeholderBubble.innerHTML = `
         <div class="typing-indicator">
           <div class="dot"></div>
           <div class="dot"></div>
@@ -195,20 +296,16 @@
         </div>
       `;
 
-      chatEl.scrollTop = chatEl.scrollHeight;
-
       try {
         const result = await client.predict("/respond", [message]);
         const comeback = Array.isArray(result.data) ? result.data[0] : result.data;
         
-        placeholder.innerHTML = "";
-        placeholder.textContent = (comeback ?? "").toString().trim() || "(no answer)";
+        placeholderBubble.innerHTML = "";
+        placeholderBubble.textContent = (comeback ?? "").toString().trim() || "(no answer)";
       } catch (err) {
         console.error(err);
-        placeholder.textContent = "Error connecting to Barbie space 💀";
+        placeholderBubble.textContent = "Barbie broke a nail (error) 💀";
       }
-      
-      chatEl.scrollTop = chatEl.scrollHeight;
     });
   </script>
 </body>
