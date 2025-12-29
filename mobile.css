@@ -1,25 +1,33 @@
+html, body { height: 100%; }
 
-html, body {
-  height: 100%;
-}
-
-body {
-  font-family: 'Quicksand', sans-serif;
-  background: linear-gradient(180deg, #ffe4f2 0%, #fda4d6 100%);
-  margin: 0;
-  padding: 0;
-
+body{
   min-height: 100vh;
   min-height: 100dvh;
-  
+
+
+  padding-top: env(safe-area-inset-top);
+
   display: flex;
   flex-direction: column;
-
-
   overflow: hidden;
 }
 
 
+header{
+  position: sticky;
+  top: env(safe-area-inset-top);
+  z-index: 50;
+}
+
+
+@media (max-width: 600px){
+  body{
+    padding-top: calc(env(safe-area-inset-top) + 12px);
+  }
+}
+
+
+/* --- Chat Area --- */
 #chat {
   flex: 1;
   width: 100%;
@@ -56,18 +64,7 @@ body {
 }
 
 @media (max-width: 480px) {
-  header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-
-  text-align: center;
-  padding: 16px 10px;
-
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  }
+  header { padding: 14px 10px; }
   h2 { font-size: 1.8rem; }
   .msg-bubble { font-size: 15px; max-width: 85%; padding: 12px 16px; }
   form { max-width: 100%; }
